@@ -1,24 +1,13 @@
-import { useEffect, useState } from "react";
-import { apiFetch } from "./api";
+import { Routes, Route } from "react-router-dom";
+import Landing from "./Landing";
+import Dashboard from "./Dashboard";
 
 function App() {
-  const [status, setStatus] = useState("loading");
-
-  useEffect(() => {
-    apiFetch("/health")
-      .then(() => setStatus("ok"))
-      .catch(() => setStatus("error"));
-  }, []);
-
   return (
-    <div className="hero">
-      <h1>IntegraTrip</h1>
-      <p>Centraliza vuelos, hoteles y clima para planificar tu proximo viaje.</p>
-      <p className="status">
-        Backend:{" "}
-        {status === "loading" ? "verificando..." : status === "ok" ? "conectado" : "sin conexion"}
-      </p>
-    </div>
+    <Routes>
+      <Route path="/" element={<Landing />} />
+      <Route path="/dashboard" element={<Dashboard />} />
+    </Routes>
   );
 }
 
