@@ -14,13 +14,22 @@ function Dashboard() {
       .catch(() => setMe({ authenticated: false }));
   }, []);
 
+  const loadServers = () => {
+    apiFetch("/mcp/status")
+      .then(setServers)
+      .catch(() => setServers([]));
+  };
+
   useEffect(() => {
     if (me?.authenticated) {
-      apiFetch("/mcp/status")
-        .then(setServers)
-        .catch(() => setServers([]));
+      loadServers();
     }
   }, [me]);
+
+  const disconnect = async (name) => {
+    await apiFetch(`/mcp/${name}/disconnect`, { method: "DELETE" });
+    loadServers();
+  };
 
   if (!me) return <p className="status">Cargando...</p>;
 
@@ -31,7 +40,7 @@ function Dashboard() {
   }
 
   return (
-    <div className="hero">
+    <div className="hero hero-wide">
       <h1>🌴 Bienvenido a IntegraTrip</h1>
       <p className="tagline">Tu plataforma ideal para planear tus vacaciones.</p>
       <p className="status">Sesion activa: {me.email}</p>
@@ -40,9 +49,13 @@ function Dashboard() {
       <div className="mcp-list">
         {servers?.map((s) => (
           <div className="mcp-card" key={s.name}>
-            <div>
-              <strong>{s.label}</strong>
-              <span className="badge">{s.protocol}</span>
+            <span className="mcp-icon">{s.icon}</span>
+            <div className="mcp-info">
+              <div>
+                <strong>{s.label}</strong>
+                <span className="badge">{s.protocol}</span>
+              </div>
+              <p className="status mcp-description">{s.description}</p>
               <div className="status-line">
                 <span
                   className={`status-dot ${
@@ -53,9 +66,18 @@ function Dashboard() {
               </div>
             </div>
             {s.connected ? (
-              <Link className="btn" to={`/mcp/${s.name}/tools`}>
-                Ver tools
-              </Link>
+              <div className="mcp-connected">
+                <Link className="btn" to={`/mcp/${s.name}/tools`}>
+                  Ver tools
+                </Link>
+                <button
+                  className="btn btn-secondary"
+                  type="button"
+                  onClick={() => disconnect(s.name)}
+                >
+                  Desconectar
+                </button>
+              </div>
             ) : (
               <a className="btn" href={`${API_BASE_URL}/connect/${s.name}`}>
                 Conectar

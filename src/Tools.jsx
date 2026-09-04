@@ -3,6 +3,30 @@ import { useParams, Link } from "react-router-dom";
 import { apiFetch } from "./api";
 import DynamicForm from "./DynamicForm";
 
+// Las tools vienen dinamicas del servidor MCP (no las controlamos nosotros),
+// asi que el icono se infiere por palabras clave en el nombre -- funciona
+// automatico para los 3 MCPs sin tener que listar cada tool a mano. El orden
+// importa: las acciones (cancelar/reservar) se revisan antes que el dominio
+// (vuelo/hotel/clima), para no perder la distincion entre "buscar" y
+// "reservar" un vuelo, por ejemplo.
+const ICON_RULES = [
+  [/cancel/, "❌"],
+  [/book|reserv|confirm/, "🎫"],
+  [/flight|airport|vuelo|aeropuerto/, "✈️"],
+  [/hotel|room|stay|alojamiento/, "🏨"],
+  [/weather|clima|forecast|pronostico/, "🌤️"],
+  [/search|buscar/, "🔍"],
+  [/list/, "📋"],
+  [/whoami|identity|profile/, "👤"],
+  [/get/, "🔎"],
+];
+
+function iconForTool(toolName) {
+  const lower = toolName.toLowerCase();
+  const match = ICON_RULES.find(([pattern]) => pattern.test(lower));
+  return match ? match[1] : "🔧";
+}
+
 // El content de tools/call viene como [{type: "text", text: "..."}], y ese
 // texto suele ser JSON en si mismo (confirmado probando contra Andes Air).
 // Si se puede parsear, lo mostramos indentado -- si no, tal cual viene.
@@ -59,7 +83,9 @@ function ToolCard({ tool, open, onToggle, onRun, submitting, results }) {
     <div className="tool-card">
       <div className="tool-card-header">
         <div className="tool-card-title">
-          <strong>{tool.name}</strong>
+          <strong>
+            {iconForTool(tool.name)} {tool.name}
+          </strong>
           <button className="btn btn-secondary" type="button" onClick={onToggle}>
             {open ? "Ocultar formulario" : "Usar esta tool"}
           </button>
