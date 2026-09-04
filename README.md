@@ -4,6 +4,12 @@ IntegraTrip — Tarea 1 de Taller de Integración - Javiera Martínez.
 
 React + Vite (JavaScript). Consume la API de [`t1-ti-backend`](https://github.com/javiera9/t1-ti-backend); nunca habla directo con Supabase, el Authorization Server ni los servidores MCP.
 
+## URL en producción
+
+**App desplegada: https://t1-ti-frontend.onrender.com**
+
+Ahí se puede iniciar sesión, conectar los 3 MCPs, listar sus tools y ejecutarlas.
+
 ## Regla de arquitectura no negociable
 
 Este frontend no debe recibir, guardar ni manejar tokens de acceso, refresh tokens, `client_secret`s ni ninguna credencial. Nada sensible en `localStorage`/`sessionStorage`. Si algo parece requerir un secret aca, esa logica deberia vivir en el backend.
